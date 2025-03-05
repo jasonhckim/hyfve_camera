@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera App</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        video, canvas { width: 100%; max-width: 400px; }
+        button { padding: 10px; margin: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Take a Picture</h1>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <br>
+    <button id="capture">Capture</button>
+    <button id="save" style="display:none;">Save to Gallery</button>
+    <br>
+    <a id="download" style="display:none;">Download Image</a>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const saveButton = document.getElementById('save');
+        const downloadLink = document.getElementById('download');
+
+        // Access the camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => console.error("Error accessing camera:", err));
+
+        // Capture image
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            saveButton.style.display = 'block';
+        });
+
+        // Save to gallery (Download workaround)
+        saveButton.addEventListener('click', () => {
+            const image = canvas.toDataURL('image/png');
+            downloadLink.href = image;
+            downloadLink.download = 'photo.png';
+            downloadLink.style.display = 'block';
+            downloadLink.click();
+        });
+    </script>
+</body>
+</html>
