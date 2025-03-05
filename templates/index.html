@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image to Text</title>
+</head>
+<body>
+    <h2>Take Pictures and Extract Label Data</h2>
+    
+    <h3>Clothing Image</h3>
+    <input type="file" accept="image/*" capture="environment" id="clothing" required>
+    <img id="clothingPreview" width="200"/>
+    
+    <h3>Label Image</h3>
+    <input type="file" accept="image/*" capture="environment" id="label" required>
+    <img id="labelPreview" width="200"/>
+    
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="clothing" id="clothingInput">
+        <input type="hidden" name="label" id="labelInput">
+        <button type="submit">Upload & Process</button>
+    </form>
+    
+    {% if final_image %}
+        <h3>Processed Image:</h3>
+        <img src="{{ final_image }}" width="300"/>
+        <br>
+        <a href="/download">Download Final Image</a>
+    {% endif %}
+    
+    <script>
+        function previewImage(input, previewId, hiddenInputId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(hiddenInputId).value = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        document.getElementById("clothing").addEventListener("change", function() {
+            previewImage(this, "clothingPreview", "clothingInput");
+        });
+        document.getElementById("label").addEventListener("change", function() {
+            previewImage(this, "labelPreview", "labelInput");
+        });
+    </script>
+</body>
+</html>
